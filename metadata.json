@@ -1,0 +1,6 @@
+{
+  "name": "Awan Aaram",
+  "description": "Calculate and track your electricity bills, estimate appliance energy consumption, and manage billing history offline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
