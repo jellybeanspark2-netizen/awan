@@ -6,8 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.Appliance
 import com.example.data.BillRecord
 import com.example.data.AppRepository
-import com.example.api.GeminiClient
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -21,8 +19,7 @@ class BillViewModel(private val repository: AppRepository) : ViewModel() {
     val appliances: StateFlow<List<Appliance>> = repository.allAppliances
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val aiResponse = MutableStateFlow("")
-    val isAiLoading = MutableStateFlow(false)
+
 
     init {
         // Pre-populate default appliances if the database is empty
@@ -136,50 +133,7 @@ class BillViewModel(private val repository: AppRepository) : ViewModel() {
         }
     }
 
-    fun askAiForRecommendations(customPrompt: String? = null) {
-        viewModelScope.launch {
-            isAiLoading.value = true
-            aiResponse.value = "Consulting the Awan Aaram AI Energy expert..."
 
-            // Build dynamic context prompt based on the user's appliance database
-            val currentAppliances = appliances.value
-            val applianceContext = if (currentAppliances.isEmpty()) {
-                "No appliances defined yet."
-            } else {
-                currentAppliances.joinToString("\n") { 
-                    "- ${it.name}: ${it.wattage} Watts, used ${it.dailyHours} hours/day, qty: ${it.quantity} (Est. ${String.format("%.2f", it.monthlyKwh)} kWh/month)"
-                }
-            }
-
-            val recentBills = billRecords.value.take(3)
-            val billContext = if (recentBills.isEmpty()) {
-                "No billing history recorded yet."
-            } else {
-                recentBills.joinToString("\n") {
-                    "- Date: ${java.text.DateFormat.getDateInstance().format(it.billingDate)}, Consumption: ${it.consumptionKwh} kWh, Cost: $${String.format("%.2f", it.totalBill)}"
-                }
-            }
-
-            val systemContext = """
-                You are "Awan Aaram AI", a helpful, elite AI energy expert. Your goal is to guide homeowners to optimize their electricity consumption, save money, and live sustainably.
-                
-                Here is the user's current household appliance inventory:
-                $applianceContext
-                
-                Here is the user's recent billing history:
-                $billContext
-                
-                Please respond to their question:
-                ${customPrompt ?: "Give me a thorough analysis of my appliance energy consumption, identify the top 3 power consumers, and give me 5 extremely specific, practical tips to lower my next electricity bill."}
-                
-                Make your response highly actionable, friendly, structured in clear Markdown, and formatted with emojis.
-            """.trimIndent()
-
-            val responseText = GeminiClient.getEnergyAdvice(systemContext)
-            aiResponse.value = responseText
-            isAiLoading.value = false
-        }
-    }
 }
 
 class BillViewModelFactory(private val repository: AppRepository) : ViewModelProvider.Factory {

@@ -73,12 +73,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(viewModel: BillViewModel) {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabTitles = listOf("Calculator", "Appliances", "History", "AI expert")
+    val tabTitles = listOf("Calculator", "Appliances", "History")
     val tabIcons = listOf(
         Icons.Default.Calculate,
         Icons.Default.ElectricalServices,
-        Icons.Default.History,
-        Icons.Default.AutoAwesome
+        Icons.Default.History
     )
 
     Scaffold(
@@ -102,19 +101,7 @@ fun MainScreen(viewModel: BillViewModel) {
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                actions = {
-                    IconButton(
-                        onClick = { viewModel.askAiForRecommendations() },
-                        modifier = Modifier.testTag("appbar_quick_ai_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = "Quick AI Recommendation",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
+                )
             )
         }
     ) { innerPadding ->
@@ -152,7 +139,6 @@ fun MainScreen(viewModel: BillViewModel) {
                     0 -> CalculatorTab(viewModel)
                     1 -> AppliancesTab(viewModel)
                     2 -> HistoryTab(viewModel)
-                    3 -> AiExpertTab(viewModel)
                 }
             }
         }
@@ -1041,169 +1027,4 @@ fun HistoryTab(viewModel: BillViewModel) {
     }
 }
 
-// ==================== AI EXPERT TAB ====================
-@Composable
-fun AiExpertTab(viewModel: BillViewModel) {
-    val aiResponse by viewModel.aiResponse.collectAsState()
-    val isAiLoading by viewModel.isAiLoading.collectAsState()
-    var userPrompt by remember { mutableStateOf("") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Welcome Header
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AutoAwesome,
-                    contentDescription = "AI",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Column {
-                    Text(
-                        text = "Awan Aaram AI Expert",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        text = "Your intelligent cloud-saving consultant. Get specialized household energy plans.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // AI Response display card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                if (aiResponse.isEmpty() && !isAiLoading) {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "Need tips to reduce your utility bills?",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Tap 'Analyze' to scan your custom appliance inventory and generate a detailed savings action plan.",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = { viewModel.askAiForRecommendations() },
-                            modifier = Modifier.testTag("analyze_appliances_ai_button")
-                        ) {
-                            Icon(Icons.Default.AutoAwesome, contentDescription = "AI")
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Analyze Home Energy")
-                        }
-                    }
-                } else {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("Consultation Response:", fontWeight = FontWeight.Bold, fontSize = 12.sp, color = MaterialTheme.colorScheme.primary)
-                            if (isAiLoading) {
-                                CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
-                            }
-                        }
-                        Divider(modifier = Modifier.padding(vertical = 8.dp))
-                        
-                        // Scrollable response text
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Text(
-                                text = aiResponse,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .padding(bottom = 16.dp)
-                                    .testTag("ai_response_text")
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Custom user question input
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = userPrompt,
-                onValueChange = { userPrompt = it },
-                placeholder = { Text("Ask AI for energy advice...", fontSize = 14.sp) },
-                modifier = Modifier
-                    .weight(1f)
-                    .testTag("ai_custom_input"),
-                maxLines = 2,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
-            )
-
-            IconButton(
-                onClick = {
-                    if (userPrompt.isNotBlank()) {
-                        viewModel.askAiForRecommendations(userPrompt)
-                        userPrompt = ""
-                    }
-                },
-                enabled = userPrompt.isNotBlank() && !isAiLoading,
-                modifier = Modifier
-                    .background(
-                        color = if (userPrompt.isNotBlank() && !isAiLoading) MaterialTheme.colorScheme.primary else Color.LightGray.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .testTag("send_ai_prompt_button")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Send prompt",
-                    tint = Color.White
-                )
-            }
-        }
-    }
-}

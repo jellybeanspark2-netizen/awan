@@ -1,8 +1,8 @@
 # Awan Aaram ☁️⚡
 
-**Awan Aaram** ("Cloud Comfort") is a modern, highly polished, and offline-first Android application designed to help homeowners track domestic utilities, simulate appliance energy consumption, estimate electricity bills with local tariff policies, and receive intelligent, personalized advice from an AI energy consultant.
+**Awan Aaram** ("Cloud Comfort") is a modern, highly polished, and offline-first Android application designed to help homeowners track domestic utilities, simulate appliance energy consumption, and estimate electricity bills with local tariff policies.
 
-Built using **Kotlin, Jetpack Compose, Room Database, Retrofit, and the Gemini API (via Gemini-3.5-flash)**, Awan Aaram combines a stunning Material 3 interface with professional-grade local utility engineering.
+Built using **Kotlin, Jetpack Compose, and Room Database**, Awan Aaram combines a stunning Material 3 interface with professional-grade local utility engineering.
 
 ---
 
@@ -30,10 +30,6 @@ Awan Aaram employs an eye-safe, premium **Energy Savings & Cloud Comfort** theme
 *   **Interactive Modal Details**: Tap any saved record to display a gorgeous, precise financial breakdown.
 *   **Manage Logs**: Hold or click to safely delete historical logs once they are settled.
 
-### 4. Awan Aaram AI Energy Consultant 🤖
-*   **Tailored Advice**: Sends your current appliance database and recent bill history to Gemini-3.5-flash for a customized, high-impact domestic savings advice report.
-*   **Custom Prompts**: Enter your own custom questions or issues directly to ask the AI for specific appliance optimizations.
-
 ---
 
 ## 🏗️ Architecture & Stack
@@ -43,14 +39,12 @@ Awan Aaram follows strict **Modern Android Architecture (MVVM)** guidelines:
 ```
 com.example
 ├── MainActivity.kt          # Single-Activity compose container hosting tabs and navigation
-├── api
-│   └── GeminiApi.kt         # Retrofit services, Moshi converters, and Gemini client bindings
 ├── data
 │   ├── Appliance.kt         # Room Entity for simulated appliances
 │   ├── BillRecord.kt        # Room Entity for historical utility bills
 │   ├── AppDao.kt            # Room Data Access Object defining SQL queries
 │   ├── AppDatabase.kt       # Room Database builder with destructive migration fallback
-│   └── AppRepository.kt     # Clean repository layer abstracting local and cloud data tasks
+│   └── AppRepository.kt     # Clean repository layer abstracting local data tasks
 └── ui
     ├── BillViewModel.kt     # Core ViewModel managing calculation logic and state flows
     └── theme
@@ -63,20 +57,11 @@ com.example
 *   **UI Framework**: Jetpack Compose (Declarative UI)
 *   **Design System**: Material Design 3 (M3)
 *   **Database**: Room Database (SQLite abstraction)
-*   **Networking**: Retrofit 2 & OkHttp 3
-*   **JSON Serialization**: Moshi with Kotlin codegen
 *   **Asynchronous Flows**: Kotlin Coroutines & StateFlow
-*   **AI Integration**: Google Gemini-3.5-flash API via Retrofit and direct user-injected credentials.
 
 ---
 
 ## 🚀 Setting Up & Running
-
-### Prerequisites
-To use the AI Energy Consultant feature, you must have a valid Gemini API Key.
-1.  Go to **Google AI Studio**.
-2.  Create an API Key.
-3.  Add it securely into your environment or using the AI Studio **Secrets Panel** in the UI as `GEMINI_API_KEY`. (Do not hardcode your key directly in code).
 
 ### Building the Project
 Import this folder into Android Studio:
