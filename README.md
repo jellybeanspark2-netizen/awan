@@ -33,11 +33,4 @@ I designed and built this app to help people easily understand their electricity
 
 ---
 
-## 🚀 How to Run the App
-
-1.  Download and install **Android Studio** and the **Flutter SDK**.
-2.  Clone or extract this project folder.
-3.  Open the project in Android Studio.
-4.  Run `flutter pub get` in the terminal to fetch the packages.
-5.  Connect your physical Android/iOS phone via USB (with Developer Options turned on) or start a Virtual Device Emulator.
-6.  Click the **Run** button (green play icon) in Android Studio to build and launch the app!
+#
